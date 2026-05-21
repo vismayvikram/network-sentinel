@@ -8,7 +8,7 @@ from modules.dns_tunnel import detect_dns_tunneling
 from modules.port_scan import detect_port_scan
 from modules.http_inspect import detect_http_inspection
 
-interface = "eth0"
+interface = conf.iface
 count = 0
 
 def packet_process(packet):
@@ -19,6 +19,9 @@ def packet_process(packet):
         # ARP
         if packet.haslayer(ARP):
             detect_arp_spoofing(packet)
+        
+        if not packet.haslayer(IP):
+            return
         
         # ICMP
         if packet.haslayer(ICMP):
@@ -32,21 +35,16 @@ def packet_process(packet):
             detect_port_scan(packet)
 
             # HTTP Inspection
-            if packet[TCP].dport in [80, 8080]:
+            if packet[TCP].dport in [80, 8080, 443]:
                 detect_http_inspection(packet)
-        
-        # UDP
-        if packet.haslayer(UDP):
-            if packet[UDP].dport == 53 or packet[UDP].sport == 53:
-                detect_dns_tunneling(packet)
+
+        #DNS
+        if packet.haslayer("DNS"):
+            detect_dns_tunneling(packet)
         
     except Exception as ex:
         print("[!] Error processing packet: ", ex)
                 
-
-
-
-
 
 def main_nids():
     print("[*] Starting NIDS on interface: ", interface)
@@ -55,14 +53,16 @@ def main_nids():
 
     try:
         sniff(iface= interface, prn = packet_process, store = False)
-    except KeyboardInterrupt:
 
-        print("\n[*] Stopping NIDS...")
-        print("[*] Total packets captured: ", count)
-        print("[*] Exiting.")
-        exit(0)
     except PermissionError:
         print("[!] PERMISSION DENIED: This program requires root provileges to run.")
         print("    Please run the program with elevated permissions.")
     
+    print("\n[*] Stopping NIDS...")
+    print("[*] Total packets captured: ", count)
+    print("[*] Exiting.")
+    exit(0)
+    
+if __name__ == "__main__":
+    main_nids()
 
