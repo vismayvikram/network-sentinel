@@ -1,4 +1,3 @@
-import re
 from logger import alert
 sql_patterns = ["' OR 1=1", "UNION SELECT", "DROP TABLE", "SELECT * FROM"]
 xss_patterns = ["<script>", "javascript:", "onerror="]

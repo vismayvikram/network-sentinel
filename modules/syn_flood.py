@@ -18,11 +18,7 @@ def detect_syn_flood(packet):
         syn_tracker[packet_ip].append(current_time)
 
         if len(syn_tracker[packet_ip]) > threshold:  # Threshold for SYN flood
-            alert(
-                "SYN_FLOOD",
-                packet_ip,
-                f"SYN Flood detected with {len(syn_tracker[packet_ip])} SYN packets in {time_window} seconds",
-            )
+            alert("SYN_FLOOD", packet_ip, f"SYN Flood detected with {len(syn_tracker[packet_ip])} SYN packets in {time_window} seconds")
             syn_tracker[packet_ip] = []
             return True
         else:

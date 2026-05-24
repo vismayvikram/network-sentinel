@@ -22,7 +22,8 @@ def detect_port_scan(packet):
         unique_count = len(set(port for port, _ in port_tracker[packet_ip]))
 
         if unique_count > threshold:
-            attack_details = (f"Port Scan detected with {unique_count} unique ports in {time_window} seconds")
+            scanned_ports = sorted(set(port for port, _ in port_tracker[packet_ip]))
+            attack_details = (f"Port Scan detected with {unique_count} unique ports in {time_window} seconds.  Ports: {scanned_ports}")
             alert("PORT_SCAN", packet_ip, attack_details)
             port_tracker[packet_ip] = []
     except Exception as e:
