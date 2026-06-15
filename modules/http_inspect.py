@@ -5,7 +5,6 @@ xss_patterns = ["<script>", "javascript:", "onerror="]
 def detect_http_inspection(packet):
     try:
         packet_ip = packet["IP"].src
-        tcp_port = packet["TCP"].dport
         if packet.haslayer("Raw"):
             payload = packet["Raw"].load.decode('utf-8', errors='ignore').lower()
 

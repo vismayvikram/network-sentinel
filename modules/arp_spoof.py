@@ -10,8 +10,6 @@ def detect_arp_spoofing(packet):
         
         global arp_tracker
         
-
-        
         if packet_ip not in arp_tracker:
             arp_tracker[packet_ip] = packet_mac
             return
