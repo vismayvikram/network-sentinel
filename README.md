@@ -39,7 +39,7 @@ The NIDS operates on a multi-stage pipeline designed to minimize latency while m
 ##  Design Philosophy: Feature Engineering & Generalization
 Unlike traditional models that overfit to specific network environments, this system is built on a **Topology Agnostic** philosophy:
 
-*   **Throughput Invariance:** Raw byte and packet counts are intentionally excluded. These metrics add unnecessary noise and vary wildly between different hardware.
+*   **Hardware-Independent Throughput:** Raw byte and packet counts are intentionally excluded. These metrics add unnecessary noise and vary wildly between different hardware.
 *   **Behavioral Ratios:** The model focuses on **Packet and Byte Ratios**. This prioritizes the *symmetry* of communication—a high-signal indicator of botnet behavior—over simple volume.
 *   **Network Portability:** Models are not trained on raw IP addresses. Instead, they utilize categorical flags (`is_private`, `is_loopback`). This ensures a model trained in one environment can be deployed on any network without re-training.
 *   **Noise Reduction:** By focusing on standardized inter-arrival times (jitter) and flow duration, the system ignores transient network spikes to reduce False Positive Rates (FPR).
@@ -52,10 +52,10 @@ The machine learning components were trained on a diversified dataset including 
 | Model | Algorithm | Training Data | Cross-Validated Metrics |
 |:---|:---|:---|:---|
 | **Botnet Detector** | Random Forest (200 est.) | CIC-IDS-2017 Friday + home flows | Precision: 94.1% · Recall: 99.1% · F1: 96.6% |
-| **Beaconing Detector** | Random Forest (100 est.) | UNSW-NB15 + home captures | Precision: 89.5% · Recall: 85.2% · F1: 87.3% |
-| **Anomaly Detector** | Isolation Forest (200 est., contamination=0.05) | CIC-IDS + UNSW-NB15 + home flows | Detection Rate: **94.3%** · FPR: 3.2% |
+| **Beaconing Detector** | Random Forest (100 est.) | UNSW-NB15 + home captures | Precision: 94.7% · Recall: 98.3% · F1: 96.4% |
+| **Anomaly Detector** | Isolation Forest (200 est., contamination=0.05) | CIC-IDS + UNSW-NB15 + home flows | Detection Rate: 94.3% |
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 *   Python 3.10+
@@ -81,19 +81,20 @@ python main.py
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 *   `main.py`: The system entry point and packet sniffer orchestration.
 *   `modules/`: Contains individual logic for rule-based detectors and ML wrappers.
 *   `ML/`: 
     *   `models/`: Serialized `.pkl` files for production inference.
     *   `training/`: Comprehensive Jupyter Notebooks detailing the data science lifecycle.
 *   `logger.py`: Unified forensic logging system.
-*   `home_network_data/`: Local baseline traffic captures for anomaly calibration.
+
 
 ---
 
-## 📝 Logging & Forensics
+##  Logging & Forensics
 All alerts are logged to `logs/alerts.log` in the following format:
+
 `[Timestamp] [!] ALERT | [Attack_Type] | SRC: [IP_Address] | [Technical_Details]`
 
 ---
